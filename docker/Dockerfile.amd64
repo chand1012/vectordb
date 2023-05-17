@@ -1,0 +1,15 @@
+FROM denoland/deno:1.33.3 AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN deno compile --allow-env --allow-net --allow-write --allow-read --output vectordb main.ts
+
+FROM debian:bullseye-slim
+
+WORKDIR /app
+
+COPY --from=builder /app/vectordb .
+
+ENTRYPOINT ["/app/vectordb", "--mode"]
