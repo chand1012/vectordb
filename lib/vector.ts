@@ -64,6 +64,10 @@ class VectorDB {
     url = "unknown",
     embedding: number[] = [],
   ) {
+    if (text.length === 0 && embedding.length === 0) {
+      throw new Error("Text or embedding must be provided");
+    }
+
     if (embedding.length === 0) {
       embedding = await createEmbedding(text);
     }

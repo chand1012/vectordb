@@ -25,7 +25,13 @@ router.post("/add", async (ctx: Context) => {
   const body = ctx.request.body();
   const b = await body.value;
 
-  const id = await vec.add(b.text, b?.source || "unknown", b?.url || "unknown");
+  if (!b?.text && (!b?.embedding || b?.embedding.length === 0)) {
+    ctx.response.body = { message: "Missing text or embedding!" };
+    ctx.response.status = 400;
+    return;
+  }
+
+  const id = await vec.add(b?.text || "", b?.source || "unknown", b?.url || "unknown", b?.embedding || []);
 
   ctx.response.headers.set("Content-Type", "application/json");
   ctx.response.body = { id };
